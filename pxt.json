@@ -1,0 +1,24 @@
+{
+    "name": "PanneauSolaireDirigeableMB-MST",
+    "description": "",
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "pxt-kitronik-motor-driver": "github:kitronikltd/pxt-kitronik-motor-driver#v0.0.6",
+        "servo": "*",
+        "motorbit": "github:tinkertanker/pxt-motorbit#80a985755d1bdaa58dcd44efa425e7370399c523",
+        "microphone": "*"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "supportedTargets": [
+        "microbit"
+    ],
+    "preferredEditor": "blocksprj"
+}
