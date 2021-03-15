@@ -36,7 +36,7 @@ let MoyenneBas = 0
 let photoBas = 0
 let photohg = 0
 let photohd = 0
-let tolerance = 50
+let tolerance = 40
 let delaislecture = 10
 basic.forever(function () {
     serial.redirectToUSB()
