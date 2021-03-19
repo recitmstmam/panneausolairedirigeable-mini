@@ -66,9 +66,6 @@ basic.forever(function () {
         basic.pause(1000)
     }
 })
-/**
- * Gère la rotation de la case
- */
 basic.forever(function () {
     photohd = pins.analogReadPin(AnalogPin.P3)
     photohg = pins.analogReadPin(AnalogPin.P4)
@@ -79,6 +76,9 @@ basic.forever(function () {
     MoyenneDroite = (photoBas + photohd) / 2
     DiffVerticale = MoyenneHaut - MoyenneBas
     DiffHorizontale = MoyenneGauche - MoyenneDroite
+    radio.sendValue("Photo bas", photoBas)
+    radio.sendValue("Photo HD", photohd)
+    radio.sendValue("Photo DG", photohg)
     serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
     serial.writeLine("")
 })
@@ -93,6 +93,9 @@ basic.forever(function () {
         }
     }
 })
+/**
+ * Gère la rotation de la case
+ */
 basic.forever(function () {
     let DelaiPause = 0
     if (-1 * tolerance > DiffHorizontale || DiffHorizontale > tolerance) {
