@@ -2,9 +2,6 @@
  * Fonctions qui gèrent les moteurs. Voir le programme Test des moteurs pour déterminer le sens de rotation selon le moteur.
  */
 /**
- * Gère la rotation de la case
- */
-/**
  * Adaptation pour Micro:Bit du Projet Panneau solaire dirigeable développé par le RÉCIT MST
  * 
  * https://laboratoirecreatif.recit.org/projet-panneau-solaire-auto-dirigeable/
@@ -45,7 +42,7 @@ let PosVert = 0
 let PosHoriz = 0
 let limiteGauche = 0
 let limitebas = 0
-radio.setGroup(1)
+radio.setGroup(2)
 let tolerance = 40
 let delaislecture = 10
 limitebas = 90
@@ -100,6 +97,9 @@ basic.forever(function () {
     serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
     serial.writeLine("")
 })
+/**
+ * Gère la rotation de la case
+ */
 basic.forever(function () {
     if (-1 * tolerance > DiffVerticale || DiffVerticale > tolerance) {
         if (MoyenneHaut > MoyenneBas) {
