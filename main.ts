@@ -30,14 +30,15 @@ function Bas () {
     servos.P0.setAngle(PosVert)
 }
 let DiffHorizontale = 0
-let DiffVerticale = 0
 let MoyenneDroite = 0
 let MoyenneGauche = 0
-let MoyenneHaut = 0
-let MoyenneBas = 0
+let photoBG = 0
 let photoBD = 0
 let photoHG = 0
 let photoHD = 0
+let MoyenneBas = 0
+let MoyenneHaut = 0
+let DiffVerticale = 0
 let PosVert = 0
 let PosHoriz = 0
 let limiteGauche = 0
@@ -46,7 +47,7 @@ radio.setGroup(1)
 let tolerance = 40
 let delaislecture = 10
 limitebas = 90
-let limitehaut = 100
+let limitehaut = 180
 limiteGauche = 0
 let LimiteDroit = 180
 servos.P0.setRange(limiteGauche, LimiteDroit)
@@ -78,28 +79,6 @@ basic.forever(function () {
         basic.pause(1000)
     }
 })
-/**
- * Lecture des photorésistances et affichage des données si branché USB.
- */
-basic.forever(function () {
-    photoHD = pins.analogReadPin(AnalogPin.P3)
-    photoHG = pins.analogReadPin(AnalogPin.P4)
-    photoBD = pins.analogReadPin(AnalogPin.P10)
-    MoyenneBas = photoBD
-    MoyenneHaut = (photoHD + photoHG) / 2
-    MoyenneGauche = (photoBD + photoHG) / 2
-    MoyenneDroite = (photoBD + photoHD) / 2
-    DiffVerticale = MoyenneHaut - MoyenneBas
-    DiffHorizontale = MoyenneGauche - MoyenneDroite
-    radio.sendValue("Photo bas", photoBD)
-    radio.sendValue("Photo HD", photoHD)
-    radio.sendValue("Photo DG", photoHG)
-    serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
-    serial.writeLine("")
-})
-/**
- * Gère la rotation de la case
- */
 basic.forever(function () {
     if (-1 * tolerance > DiffVerticale || DiffVerticale > tolerance) {
         if (MoyenneHaut > MoyenneBas) {
@@ -111,6 +90,30 @@ basic.forever(function () {
         }
     }
 })
+/**
+ * Lecture des photorésistances et affichage des données si branché USB.
+ */
+basic.forever(function () {
+    photoHD = pins.analogReadPin(AnalogPin.P2)
+    photoHG = pins.analogReadPin(AnalogPin.P3)
+    photoBD = pins.analogReadPin(AnalogPin.P4)
+    photoBG = pins.analogReadPin(AnalogPin.P10)
+    MoyenneBas = (photoBD + photoBG) / 2
+    MoyenneHaut = (photoHD + photoHG) / 2
+    MoyenneGauche = (photoBD + photoHG) / 2
+    MoyenneDroite = (photoBD + photoHD) / 2
+    DiffVerticale = MoyenneHaut - MoyenneBas
+    DiffHorizontale = MoyenneGauche - MoyenneDroite
+    radio.sendValue("Photo BD", photoBD)
+    radio.sendValue("Photo BG", photoBG)
+    radio.sendValue("Photo HD", photoHD)
+    radio.sendValue("Photo HG", photoHG)
+    serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
+    serial.writeLine("")
+})
+/**
+ * Gère la rotation de la case
+ */
 basic.forever(function () {
     let DelaiPause = 0
     if (-1 * tolerance > DiffHorizontale || DiffHorizontale > tolerance) {
