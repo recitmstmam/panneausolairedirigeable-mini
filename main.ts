@@ -42,7 +42,7 @@ let PosVert = 0
 let PosHoriz = 0
 let limiteGauche = 0
 let limitebas = 0
-radio.setGroup(2)
+radio.setGroup(1)
 let tolerance = 40
 let delaislecture = 10
 limitebas = 90
