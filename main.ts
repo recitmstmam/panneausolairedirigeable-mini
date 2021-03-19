@@ -10,22 +10,27 @@
  * https://laboratoirecreatif.recit.org/projet-panneau-solaire-auto-dirigeable/
  */
 function Gauche () {
-    motorbit.freestyle(0, -50)
+    servos.P1.setAngle(PosHoriz)
 }
 /**
  * Détermination des constantes qui gère la tolérance de réaction ainsi que le délai des lectures.  Peuvent être modifiées au besoin.
  */
 function Arret () {
-    motorbit.brake()
+    servos.P0.stop()
+    servos.P1.stop()
 }
 function Haut () {
-    motorbit.freestyle(-50, 0)
+    servos.P0.setAngle(PosVert)
+}
+function PositionInitiale () {
+    servos.P0.setAngle(limitebas)
+    servos.P1.setAngle(limiteGauche)
 }
 function Droite () {
-    motorbit.freestyle(0, 50)
+    servos.P1.setAngle(PosHoriz)
 }
 function Bas () {
-    motorbit.freestyle(50, 0)
+    servos.P0.setAngle(PosVert)
 }
 let DiffHorizontale = 0
 let DiffVerticale = 0
@@ -36,12 +41,16 @@ let MoyenneBas = 0
 let photoBD = 0
 let photoHG = 0
 let photoHD = 0
+let PosVert = 0
+let PosHoriz = 0
+let limiteGauche = 0
+let limitebas = 0
 radio.setGroup(1)
 let tolerance = 40
 let delaislecture = 10
-let limitebas = 90
+limitebas = 90
 let limitehaut = 100
-let limiteGauche = 0
+limiteGauche = 0
 let LimiteDroit = 180
 servos.P0.setRange(limiteGauche, LimiteDroit)
 servos.P1.setRange(limitebas, limitehaut)
