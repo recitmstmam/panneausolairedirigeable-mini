@@ -2,6 +2,9 @@
  * Fonctions qui gèrent les moteurs. Voir le programme Test des moteurs pour déterminer le sens de rotation selon le moteur.
  */
 /**
+ * Gère la rotation de la case
+ */
+/**
  * Adaptation pour Micro:Bit du Projet Panneau solaire dirigeable développé par le RÉCIT MST
  * 
  * https://laboratoirecreatif.recit.org/projet-panneau-solaire-auto-dirigeable/
@@ -24,21 +27,24 @@ function Droite () {
 function Bas () {
     motorbit.freestyle(50, 0)
 }
-/**
- * Lecture des photorésistances et affichage des données si branché USB.
- */
 let DiffHorizontale = 0
 let DiffVerticale = 0
 let MoyenneDroite = 0
 let MoyenneGauche = 0
 let MoyenneHaut = 0
 let MoyenneBas = 0
-let photoBas = 0
-let photohg = 0
-let photohd = 0
+let photoBD = 0
+let photoHG = 0
+let photoHD = 0
 radio.setGroup(1)
 let tolerance = 40
 let delaislecture = 10
+let limitebas = 90
+let limitehaut = 100
+let limiteGauche = 0
+let LimiteDroit = 180
+servos.P0.setRange(limiteGauche, LimiteDroit)
+servos.P1.setRange(limitebas, limitehaut)
 basic.forever(function () {
     serial.redirectToUSB()
 })
@@ -66,19 +72,22 @@ basic.forever(function () {
         basic.pause(1000)
     }
 })
+/**
+ * Lecture des photorésistances et affichage des données si branché USB.
+ */
 basic.forever(function () {
-    photohd = pins.analogReadPin(AnalogPin.P3)
-    photohg = pins.analogReadPin(AnalogPin.P4)
-    photoBas = pins.analogReadPin(AnalogPin.P10)
-    MoyenneBas = photoBas
-    MoyenneHaut = (photohd + photohg) / 2
-    MoyenneGauche = (photoBas + photohg) / 2
-    MoyenneDroite = (photoBas + photohd) / 2
+    photoHD = pins.analogReadPin(AnalogPin.P3)
+    photoHG = pins.analogReadPin(AnalogPin.P4)
+    photoBD = pins.analogReadPin(AnalogPin.P10)
+    MoyenneBas = photoBD
+    MoyenneHaut = (photoHD + photoHG) / 2
+    MoyenneGauche = (photoBD + photoHG) / 2
+    MoyenneDroite = (photoBD + photoHD) / 2
     DiffVerticale = MoyenneHaut - MoyenneBas
     DiffHorizontale = MoyenneGauche - MoyenneDroite
-    radio.sendValue("Photo bas", photoBas)
-    radio.sendValue("Photo HD", photohd)
-    radio.sendValue("Photo DG", photohg)
+    radio.sendValue("Photo bas", photoBD)
+    radio.sendValue("Photo HD", photoHD)
+    radio.sendValue("Photo DG", photoHG)
     serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
     serial.writeLine("")
 })
@@ -93,9 +102,6 @@ basic.forever(function () {
         }
     }
 })
-/**
- * Gère la rotation de la case
- */
 basic.forever(function () {
     let DelaiPause = 0
     if (-1 * tolerance > DiffHorizontale || DiffHorizontale > tolerance) {
