@@ -1,17 +1,13 @@
 /**
  * Fonctions qui gèrent les moteurs. Voir le programme Test des moteurs pour déterminer le sens de rotation selon le moteur.
  */
-/**
- * Adaptation pour Micro:Bit du Projet Panneau solaire dirigeable développé par le RÉCIT MST
- * 
- * https://laboratoirecreatif.recit.org/projet-panneau-solaire-auto-dirigeable/
- */
+// Adaptation pour Micro:Bit du Projet Panneau solaire dirigeable développé par le RÉCIT MST
+// 
+// https://laboratoirecreatif.recit.org/projet-panneau-solaire-auto-dirigeable/
 function Gauche () {
     servos.P1.setAngle(PosHoriz)
 }
-/**
- * Détermination des constantes qui gère la tolérance de réaction ainsi que le délai des lectures.  Peuvent être modifiées au besoin.
- */
+// Détermination des constantes qui gère la tolérance de réaction ainsi que le délai des lectures.  Peuvent être modifiées au besoin.
 function Arret () {
     servos.P0.stop()
     servos.P1.stop()
@@ -90,9 +86,7 @@ basic.forever(function () {
         }
     }
 })
-/**
- * Lecture des photorésistances et affichage des données si branché USB.
- */
+// Lecture des photorésistances et affichage des données si branché USB.
 basic.forever(function () {
     photoHD = pins.analogReadPin(AnalogPin.P2)
     photoHG = pins.analogReadPin(AnalogPin.P3)
@@ -100,7 +94,7 @@ basic.forever(function () {
     photoBG = pins.analogReadPin(AnalogPin.P10)
     MoyenneBas = (photoBD + photoBG) / 2
     MoyenneHaut = (photoHD + photoHG) / 2
-    MoyenneGauche = (photoBD + photoHG) / 2
+    MoyenneGauche = (photoBG + photoHG) / 2
     MoyenneDroite = (photoBD + photoHD) / 2
     DiffVerticale = MoyenneHaut - MoyenneBas
     DiffHorizontale = MoyenneGauche - MoyenneDroite
@@ -111,9 +105,7 @@ basic.forever(function () {
     serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
     serial.writeLine("")
 })
-/**
- * Gère la rotation de la case
- */
+// Gère la rotation de la case
 basic.forever(function () {
     let DelaiPause = 0
     if (-1 * tolerance > DiffHorizontale || DiffHorizontale > tolerance) {
