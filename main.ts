@@ -5,7 +5,12 @@
 // 
 // https://laboratoirecreatif.recit.org/projet-panneau-solaire-auto-dirigeable/
 function Gauche () {
-    servos.P1.setAngle(PosHoriz)
+    PositionHoriz += PasDeDeplacement
+    if (PositionHoriz >= LimiteDroite) {
+        PositionHoriz = LimiteDroite
+    } else {
+        servos.P1.setAngle(PositionHoriz)
+    }
 }
 // Détermination des constantes qui gère la tolérance de réaction ainsi que le délai des lectures.  Peuvent être modifiées au besoin.
 function Arret () {
@@ -13,111 +18,109 @@ function Arret () {
     servos.P1.stop()
 }
 function Haut () {
-    servos.P0.setAngle(PosVert)
+    PositionVerticale += PasDeDeplacement
+    if (PositionVerticale >= LimiteHaut) {
+        PositionVerticale = LimiteHaut
+    } else {
+        servos.P0.setAngle(PositionVerticale)
+    }
 }
 function PositionInitiale () {
-    servos.P0.setAngle(limitebas)
+    servos.P0.setAngle(LimiteBas)
     servos.P1.setAngle(limiteGauche)
 }
 function Droite () {
-    servos.P1.setAngle(PosHoriz)
+    PositionHoriz += -1 * PasDeDeplacement
+    if (PositionHoriz <= limiteGauche) {
+        PositionHoriz = limiteGauche
+    } else {
+        servos.P1.setAngle(PositionHoriz)
+    }
 }
 function Bas () {
-    servos.P0.setAngle(PosVert)
+    PositionVerticale += -1 * PasDeDeplacement
+    if (PositionVerticale <= LimiteBas) {
+        PositionVerticale = LimiteBas
+    } else {
+        servos.P0.setAngle(PositionVerticale)
+    }
 }
 let DiffHorizontale = 0
+let DiffVerticale = 0
 let MoyenneDroite = 0
 let MoyenneGauche = 0
-let photoBG = 0
-let photoBD = 0
-let photoHG = 0
-let photoHD = 0
-let MoyenneBas = 0
 let MoyenneHaut = 0
-let DiffVerticale = 0
-let PosVert = 0
-let PosHoriz = 0
+let MoyenneBas = 0
+let PhotoBG = 0
+let PhotoBD = 0
+let PhotoHG = 0
+let PhotoHD = 0
+let PositionVerticale = 0
+let PasDeDeplacement = 0
+let PositionHoriz = 0
+let LimiteDroite = 0
 let limiteGauche = 0
-let limitebas = 0
+let LimiteHaut = 0
+let LimiteBas = 0
 radio.setGroup(1)
-let tolerance = 40
-let delaislecture = 10
-limitebas = 90
-let limitehaut = 180
+let Tolerance = 40
+let DelaiLecture = 10
+let DelaiPause = 1000
+LimiteBas = 90
+LimiteHaut = 180
 limiteGauche = 0
-let LimiteDroit = 180
-servos.P0.setRange(limiteGauche, LimiteDroit)
-servos.P1.setRange(limitebas, limitehaut)
+LimiteDroite = 180
+servos.P0.setRange(limiteGauche, LimiteDroite)
+servos.P1.setRange(LimiteBas, LimiteHaut)
 basic.forever(function () {
     serial.redirectToUSB()
 })
-basic.forever(function () {
-    if (pins.digitalReadPin(DigitalPin.P9) == 0) {
-        Arret()
-        basic.pause(500)
-        Haut()
-        basic.pause(1000)
-        Gauche()
-        basic.pause(2000)
-        Arret()
-        basic.pause(1000)
-    }
-})
-basic.forever(function () {
-    if (pins.digitalReadPin(DigitalPin.P11) == 0) {
-        Arret()
-        basic.pause(500)
-        Bas()
-        basic.pause(1000)
-        Gauche()
-        basic.pause(2000)
-        Arret()
-        basic.pause(1000)
-    }
-})
-basic.forever(function () {
-    if (-1 * tolerance > DiffVerticale || DiffVerticale > tolerance) {
-        if (MoyenneHaut > MoyenneBas) {
-            Haut()
-        } else if (MoyenneHaut < MoyenneBas) {
-            Bas()
-        } else if (MoyenneHaut == MoyenneBas) {
-            Arret()
-        }
-    }
-})
 // Lecture des photorésistances et affichage des données si branché USB.
 basic.forever(function () {
-    photoHD = pins.analogReadPin(AnalogPin.P2)
-    photoHG = pins.analogReadPin(AnalogPin.P3)
-    photoBD = pins.analogReadPin(AnalogPin.P4)
-    photoBG = pins.analogReadPin(AnalogPin.P10)
-    MoyenneBas = (photoBD + photoBG) / 2
-    MoyenneHaut = (photoHD + photoHG) / 2
-    MoyenneGauche = (photoBG + photoHG) / 2
-    MoyenneDroite = (photoBD + photoHD) / 2
+    PhotoHD = pins.analogReadPin(AnalogPin.P2)
+    PhotoHG = pins.analogReadPin(AnalogPin.P3)
+    PhotoBD = pins.analogReadPin(AnalogPin.P4)
+    PhotoBG = pins.analogReadPin(AnalogPin.P10)
+    MoyenneBas = (PhotoBD + PhotoBG) / 2
+    MoyenneHaut = (PhotoHD + PhotoHG) / 2
+    MoyenneGauche = (PhotoBG + PhotoHG) / 2
+    MoyenneDroite = (PhotoBD + PhotoHD) / 2
     DiffVerticale = MoyenneHaut - MoyenneBas
     DiffHorizontale = MoyenneGauche - MoyenneDroite
-    radio.sendValue("Photo BD", photoBD)
-    radio.sendValue("Photo BG", photoBG)
-    radio.sendValue("Photo HD", photoHD)
-    radio.sendValue("Photo HG", photoHG)
-    serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, delaislecture, tolerance])
+    radio.sendValue("Photo BD", PhotoBD)
+    radio.sendValue("Photo BG", PhotoBG)
+    radio.sendValue("Photo HD", PhotoHD)
+    radio.sendValue("Photo HG", PhotoHG)
+    serial.writeNumbers([MoyenneHaut, MoyenneBas, MoyenneGauche, MoyenneDroite, DelaiLecture, Tolerance])
     serial.writeLine("")
 })
 // Gère la rotation de la case
 basic.forever(function () {
-    let DelaiPause = 0
-    if (-1 * tolerance > DiffHorizontale || DiffHorizontale > tolerance) {
+    if (-1 * Tolerance > DiffHorizontale || DiffHorizontale > Tolerance) {
         if (MoyenneGauche > MoyenneDroite) {
-            Gauche()
+            if (PositionHoriz >= limiteGauche && PositionHoriz <= LimiteDroite) {
+                Gauche()
+            }
         } else if (MoyenneGauche < MoyenneDroite) {
-            Droite()
+            if (PositionHoriz >= limiteGauche && PositionHoriz <= LimiteDroite) {
+                Droite()
+            }
         } else if (MoyenneGauche == MoyenneDroite) {
             Arret()
         }
     }
-    basic.pause(DelaiPause)
-    Arret()
+    if (-1 * Tolerance > DiffVerticale || DiffVerticale > Tolerance) {
+        if (MoyenneHaut > MoyenneBas) {
+            if (PositionVerticale >= LimiteBas && PositionVerticale <= LimiteHaut) {
+                Haut()
+            }
+        } else if (MoyenneHaut < MoyenneBas) {
+            if (PositionVerticale >= LimiteBas && PositionVerticale <= LimiteHaut) {
+                Bas()
+            }
+        } else if (MoyenneHaut == MoyenneBas) {
+            Arret()
+        }
+    }
     basic.pause(DelaiPause)
 })
